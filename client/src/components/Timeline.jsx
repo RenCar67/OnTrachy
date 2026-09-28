@@ -20,11 +20,28 @@ const STATUS_CLASSES = {
   EXCEPTION: styles.statusException
 };
 
+export function formatDate(value) {
+  if (!value) return 'Fecha desconocida';
+  const d = new Date(value);
+  if (isNaN(d.getTime())) return 'Fecha desconocida';
+  return d.toLocaleDateString('es-CL', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
 export function Timeline({ history }) {
   if (!history || history.length === 0) return null;
 
-  // Cronológico descendente (más reciente primero)
-  const sorted = [...history].sort((a, b) => new Date(b.date) - new Date(a.date));
+  // Cronológico descendente seguro contra fechas inválidas
+  const sorted = [...history].sort((a, b) => {
+    const timeA = new Date(a.date).getTime() || 0;
+    const timeB = new Date(b.date).getTime() || 0;
+    return timeB - timeA;
+  });
 
   return (
     <div className={styles.timelineSection}>
@@ -35,10 +52,7 @@ export function Timeline({ history }) {
             <div className={`${styles.timelineDot} ${idx === 0 ? styles.timelineDotActive : ''}`} />
             <div className={styles.timelineContent}>
               <div className={styles.timelineDate}>
-                {new Date(event.date).toLocaleDateString('es-CL', {
-                  year: 'numeric', month: 'long', day: 'numeric',
-                  hour: '2-digit', minute: '2-digit'
-                })}
+                {formatDate(event.date)}
               </div>
               <div className={styles.timelineStatus}>{event.rawStatus}</div>
               <div className={styles.timelineLocation}>
