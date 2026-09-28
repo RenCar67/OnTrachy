@@ -42,11 +42,11 @@ describe('CorreosChileTracker (Offline Fixtures & 404 Behavior)', () => {
     expect(result.estimatedDelivery).toBeNull();
   });
 
-  it('arroja TrackerBlockedException ante ENOTFOUND o bloqueo WAF (403)', async () => {
-    const blockError = new Error('getaddrinfo ENOTFOUND');
-    blockError.code = 'ENOTFOUND';
+  it('arroja TrackerBlockedException al recibir página de captcha Radware Bot Manager (correos_waf_blocked.html)', async () => {
+    const wafFixturePath = path.resolve(__dirname, '../fixtures/correos_waf_blocked.html');
+    const wafHtml = fs.readFileSync(wafFixturePath, 'utf8');
 
-    vi.spyOn(tracker.client, 'get').mockRejectedValueOnce(blockError);
+    vi.spyOn(tracker.client, 'get').mockResolvedValueOnce({ data: wafHtml });
 
     await expect(tracker.fetchTracking('CP123456789CL')).rejects.toThrow(TrackerBlockedException);
   });
