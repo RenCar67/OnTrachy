@@ -64,6 +64,11 @@ npm test
 
 ## Limitaciones conocidas del Hito 1
 
-- **Correos de Chile (WAF Anti-Bot & reCAPTCHA v3):**
-  Correos de Chile no dispone de una API REST pública oficial y su portal web de seguimiento (`correos.cl/seguimiento-en-linea`) se encuentra protegido por **ShieldSquare / Radware Bot Manager (`perfdrive.com`)** junto a **Google reCAPTCHA v3 / hCaptcha**. Las peticiones HTTP automatizadas directas son bloqueadas por el WAF y el sistema arroja `TrackerBlockedException` (HTTP 503). La resolución definitiva de esta limitación está planificada para la **Fase 3** mediante el adaptador de agregador externo (**17TRACK / Ship24**), tal como lo establece la especificación técnica en `OnTrachy.md`.
+- **Correos de Chile (WAF Anti-Bot, reCAPTCHA v3 & Ausencia de Camino Feliz Directo):**
+  Correos de Chile no dispone de una API REST pública oficial. Su portal web de seguimiento (`correos.cl/seguimiento-en-linea`) se encuentra montado sobre una arquitectura Liferay protegida por **ShieldSquare / Radware Bot Manager (`perfdrive.com`)** y **Google reCAPTCHA v3 / hCaptcha**.
+  
+  En este Hito 1, el flujo completo de extracción por scraping directo (obtención dinámica de sesión/token Liferay `p_auth`, resolución de captcha en navegador, emisión del POST AJAX al portlet y parseo del payload JSON) **no está implementado ni resulta técnicamente viable mediante peticiones HTTP estándar sin emulación de navegador**. El tracker actual (`CorreosChileTracker`) detecta de forma fehaciente la firma del reto del WAF y falla honestamente arrojando `TrackerBlockedException` (HTTP 503), pero **no cuenta con un camino feliz directo en este hito**.
+
+  El diseño aprobado en `OnTrachy.md` establece formalmente que la vía real y definitiva para dar soporte a Correos de Chile es a través del **adaptador de agregador externo (17TRACK / Ship24) en la Fase 3**, descartando el scraping directo frágil frente a contramedidas anti-bot.
+
 
