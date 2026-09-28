@@ -116,19 +116,23 @@ export class JapanPostTracker extends CarrierTracker {
     const parts = dateStr.match(/^(\d{1,4})[\/\-](\d{1,2})[\/\-](\d{1,4})\s+(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
     if (parts) {
       let [_, p1, p2, p3, h, m, s] = parts;
-      let year, month, day;
+      let YYYY, MM, DD;
       if (p1.length === 4) {
         // YYYY/MM/DD
-        year = parseInt(p1, 10);
-        month = parseInt(p2, 10) - 1;
-        day = parseInt(p3, 10);
+        YYYY = p1;
+        MM = p2.padStart(2, '0');
+        DD = p3.padStart(2, '0');
       } else {
         // MM/DD/YYYY
-        month = parseInt(p1, 10) - 1;
-        day = parseInt(p2, 10);
-        year = parseInt(p3, 10);
+        MM = p1.padStart(2, '0');
+        DD = p2.padStart(2, '0');
+        YYYY = p3;
       }
-      const d = new Date(Date.UTC(year, month, day, parseInt(h, 10), parseInt(m, 10), s ? parseInt(s, 10) : 0));
+      const HH = h.padStart(2, '0');
+      const mm = m.padStart(2, '0');
+      const ss = (s || '00').padStart(2, '0');
+      // Japan Post reporta en JST (UTC+9). Forzar el offset explícitamente.
+      const d = new Date(`${YYYY}-${MM}-${DD}T${HH}:${mm}:${ss}+09:00`);
       if (!isNaN(d.getTime())) return d;
     }
     const d = new Date(dateStr);
