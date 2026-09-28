@@ -1,0 +1,26 @@
+{
+  "numeroEnvio": "CP123456789CL",
+  "eventos": [
+    {
+      "fecha": "2026-03-01",
+      "hora": "10:00:00",
+      "estado": "En tránsito",
+      "centro": "PLANTA CEN SANTIAGO",
+      "descripcion": "Envío recibido en planta de clasificación"
+    },
+    {
+      "fecha": "2026-03-02",
+      "hora": "14:30:00",
+      "estado": "En reparto con cartero",
+      "centro": "SUCURSAL LAS CONDES",
+      "descripcion": "Envío en distribución a domicilio"
+    },
+    {
+      "fecha": "2026-03-03",
+      "hora": "11:15:00",
+      "estado": "Entregado a destinatario",
+      "centro": "LAS CONDES",
+      "descripcion": "Envío entregado conforme"
+    }
+  ]
+}

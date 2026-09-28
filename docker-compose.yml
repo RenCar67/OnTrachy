@@ -1,0 +1,47 @@
+services:
+  mongodb:
+    image: mongo:6.0
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: packagemate
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - packagemate-net
+
+  api_server:
+    build:
+      context: ./api_server
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - PORT=5000
+      - NODE_ENV=production
+      - MONGO_URI=mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongodb:27017/packagemate?authSource=admin
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+    networks:
+      - packagemate-net
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - api_server
+    networks:
+      - packagemate-net
+
+volumes:
+  mongo-data:
+
+networks:
+  packagemate-net:
+    driver: bridge
