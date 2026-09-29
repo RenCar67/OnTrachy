@@ -1,54 +1,57 @@
-import React, { useState } from 'react';
-import { Search, Loader2 } from 'lucide-react';
-import styles from '../styles/dashboard.module.css';
+import { ArrowRight, CheckCircle2, Search } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import styles from '../styles/App.module.css';
 
-export function TrackingSearch({ onSearch, loading }) {
-  const [trackingNumber, setTrackingNumber] = useState('');
+function getDetectedCarrier(value) {
+  const normalized = value.trim().toUpperCase();
+  if (normalized.endsWith('JP')) return 'Japan Post';
+  if (normalized.endsWith('CL') || /^\d{12}$/.test(normalized)) return 'Correos de Chile';
+  return '';
+}
 
-  const detectBadge = (code) => {
-    const clean = code.trim().toUpperCase();
-    if (/^[A-Z]{2}[0-9]{9}JP$/.test(clean)) {
-      return { text: 'Japan Post', class: styles.badgeJp };
-    }
-    const isCorreosInt = /^[A-Z]{2}[0-9]{9}CL$/.test(clean);
-    const isCorreosNac = /^(?!569)[0-9]{12}$/.test(clean);
-    if (isCorreosInt || isCorreosNac) {
-      return { text: 'Correos Chile', class: styles.badgeCl };
-    }
-    return null;
-  };
+export function TrackingSearch({ isLoading, error, onSearch }) {
+  const [value, setValue] = useState('');
+  const detectedCarrier = useMemo(() => getDetectedCarrier(value), [value]);
+  const isPossibleGuide = /^[A-Z0-9]{8,18}$/.test(value.trim().toUpperCase());
 
-  const badge = detectBadge(trackingNumber);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!trackingNumber.trim()) return;
-    onSearch(trackingNumber.trim());
-  };
+  async function submit(event) {
+    event.preventDefault();
+    if (!value.trim()) return;
+    await onSearch(value.trim().toUpperCase());
+  }
 
   return (
-    <form className={styles.searchForm} onSubmit={handleSubmit}>
-      <div className={styles.inputWrapper}>
-        <input
-          type="text"
-          id="tracking-input"
-          className={styles.searchInput}
-          placeholder="Ingresa guía (ej: EJ123456789JP o 12 dígitos)..."
-          value={trackingNumber}
-          onChange={(e) => setTrackingNumber(e.target.value)}
-          disabled={loading}
-        />
-        {badge && <span className={`${styles.badge} ${badge.class}`}>{badge.text}</span>}
+    <form className={styles.searchCard} onSubmit={submit} data-testid="form-search-package">
+      <label className={styles.searchLabel} htmlFor="tracking-number">
+        <span>Número de seguimiento</span>
+        <span className={styles.formatHint}>Japan Post · Correos de Chile</span>
+      </label>
+      <div className={styles.searchRow}>
+        <div className={styles.inputWrap}>
+          <Search className={styles.searchIcon} size={17} />
+          <input
+            id="tracking-number"
+            className={styles.searchInput}
+            value={value}
+            onChange={(e) => setValue(e.target.value.toUpperCase())}
+            placeholder="Ej. RR123456789JP"
+            autoComplete="off"
+            spellCheck={false}
+            aria-label="Número de seguimiento"
+            data-testid="input-tracking-number"
+          />
+          {detectedCarrier && (
+            <span className={styles.detectedCarrier}>
+              <span className={styles.carrierDot} /> {detectedCarrier}
+            </span>
+          )}
+        </div>
+        <button className={styles.searchButton} disabled={isLoading || !isPossibleGuide} type="submit" data-testid="button-search-package">
+          {isLoading ? 'Consultando…' : <>Consultar <ArrowRight size={15} /></>}
+        </button>
       </div>
-      <button
-        type="submit"
-        id="search-button"
-        className={styles.searchButton}
-        disabled={loading || !badge}
-      >
-        {loading ? <Loader2 className={styles.spinner} /> : <Search size={18} />}
-        Consultar
-      </button>
+      {error && <p className={styles.searchError} role="alert" data-testid="status-search-error">{error}</p>}
+      {!error && detectedCarrier && <p className={styles.demoNotice}><CheckCircle2 size={13} /> Courier detectado automáticamente por el formato</p>}
     </form>
   );
 }

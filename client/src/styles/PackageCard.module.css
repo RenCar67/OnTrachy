@@ -1,0 +1,15 @@
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.loadingSummary { border-bottom: 1px solid var(--border); padding: 24px; }
+.loadingSummary .skeleton:nth-child(1) { height: 11px; margin-bottom: 10px; width: 30%; }
+.loadingSummary .skeleton:nth-child(2) { height: 23px; margin-bottom: 11px; width: 48%; }
+.loadingSummary .skeleton:nth-child(3) { height: 11px; width: 28%; }
+.emptyCard { align-items: center; background: var(--surface); border: 1px dashed var(--border-strong); border-radius: 12px; display: flex; flex-direction: column; padding: 68px 24px; text-align: center; }
+.emptyIcon { align-items: center; background: var(--surface-raised); border: 1px solid var(--border-strong); border-radius: 10px; color: var(--green); display: flex; height: 48px; justify-content: center; width: 48px; }
+.emptyCard h2 { color: var(--text); font-size: 16px; letter-spacing: -.02em; margin: 16px 0 7px; }
+.emptyCard p { color: var(--text-muted); font-size: 13px; line-height: 1.55; margin: 0; max-width: 340px; }
+.timelineHeader { align-items: center; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; padding: 14px 24px; }
+.timelineHeader > div { align-items: center; color: var(--text); display: flex; gap: 8px; }
+.timelineHeader svg { color: var(--green); }
+.timelineHeader h3 { font-size: 13px; font-weight: 600; margin: 0; }
+.timelineHeader > span { color: var(--text-dim); font-family: var(--font-mono); font-size: 10px; }
+.cardFoot { align-items: center; border-top: 1px solid var(--border); color: var(--text-dim); display: flex; font-size: 10px; gap: 5px; justify-content: center; padding: 12px; }

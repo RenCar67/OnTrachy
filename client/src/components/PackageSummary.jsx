@@ -1,78 +1,84 @@
-import React from 'react';
-import { Package, MapPin, Clock } from 'lucide-react';
-import styles from '../styles/dashboard.module.css';
+import { Bookmark, BookmarkCheck, Clock3, Copy, RefreshCw, ShieldCheck } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import styles from '../styles/PackageSummary.module.css';
 
-const STATUS_LABELS = {
-  PRE_TRANSIT: 'Pre-tránsito',
-  IN_TRANSIT: 'En tránsito',
-  CUSTOMS_HOLD: 'Retención aduanera',
-  OUT_FOR_DELIVERY: 'En reparto',
-  DELIVERED: 'Entregado',
-  EXCEPTION: 'Excepción'
-};
+function carrierClass(carrier) {
+  return carrier.toLowerCase().includes('japan') ? styles.japan : styles.correos;
+}
 
-const STATUS_CLASSES = {
-  PRE_TRANSIT: styles.statusPreTransit,
-  IN_TRANSIT: styles.statusInTransit,
-  CUSTOMS_HOLD: styles.statusCustomsHold,
-  OUT_FOR_DELIVERY: styles.statusOutForDelivery,
-  DELIVERED: styles.statusDelivered,
-  EXCEPTION: styles.statusException
-};
+function formatDate(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return 'Sin datos';
+  return new Intl.DateTimeFormat('es-CL', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }).format(date);
+}
 
-const CARRIER_LABELS = {
-  japanpost: 'Japan Post',
-  correos_chile: 'Correos Chile'
-};
+export function PackageSummary({ data, isSaved, isLoading, onSave, onRemove, onRefresh }) {
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [title, setTitle] = useState(data.title || 'Envío sin título');
+  const [copied, setCopied] = useState(false);
 
-export function PackageSummary({ pkg }) {
-  if (!pkg) return null;
+  useEffect(() => {
+    setTitle(data.title || 'Envío sin título');
+    setIsEditingTitle(false);
+  }, [data.trackingNumber, data.title]);
 
-  const lastEvent = pkg.history && pkg.history.length > 0
-    ? pkg.history[pkg.history.length - 1]
-    : null;
+  function copyTracking() {
+    navigator.clipboard?.writeText(data.trackingNumber);
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1400);
+  }
+
+  async function save() {
+    await onSave(title);
+    setIsEditingTitle(false);
+  }
 
   return (
-    <div className={styles.summaryCard}>
+    <div className={styles.summary}>
       <div className={styles.summaryHeader}>
         <div>
-          <div className={styles.summaryTitle}>
-            <Package size={16} style={{ marginRight: '0.4rem', verticalAlign: 'text-bottom' }} />
-            {pkg.title}
+          <div className={styles.kicker}>Resumen del envío</div>
+          {isEditingTitle ? (
+            <div className={styles.titleEdit}>
+              <input value={title} onChange={(e) => setTitle(e.target.value)} autoFocus aria-label="Título del envío" data-testid="input-package-title" />
+              <button onClick={save} disabled={isLoading} data-testid="button-save-title">Guardar</button>
+            </div>
+          ) : (
+            <h2 data-testid="text-package-title">{title}</h2>
+          )}
+          <div className={styles.numberLine}>
+            <span className={styles.trackingNumber} data-testid="text-tracking-number">{data.trackingNumber}</span>
+            <button className={styles.copyButton} onClick={copyTracking} aria-label="Copiar número de seguimiento" data-testid="button-copy-tracking">
+              <Copy size={13} /> {copied ? 'Copiado' : 'Copiar'}
+            </button>
           </div>
-          <div className={styles.summaryTracking}>{pkg.trackingNumber}</div>
         </div>
-        <span className={`${styles.statusBadge} ${STATUS_CLASSES[pkg.status] || styles.statusPreTransit}`}>
-          {STATUS_LABELS[pkg.status] || pkg.status}
-        </span>
+        <div className={styles.actions}>
+          <button className={`${styles.saveButton} ${isSaved ? styles.saved : ''}`} onClick={isSaved ? onRemove : () => setIsEditingTitle(true)} disabled={isLoading} data-testid="button-save-package">
+            {isSaved ? <><BookmarkCheck size={15} /> Quitar</> : <><Bookmark size={15} /> Guardar</>}
+          </button>
+          <button className={styles.refreshButton} onClick={onRefresh} disabled={isLoading} aria-label="Actualizar seguimiento" data-testid="button-refresh-package">
+            <RefreshCw size={15} className={isLoading ? styles.spin : ''} />
+          </button>
+        </div>
       </div>
-      <div className={styles.summaryMeta}>
-        <div className={styles.metaItem}>
-          <span className={styles.metaLabel}>Carrier</span>
-          <span className={styles.metaValue}>
-            {CARRIER_LABELS[pkg.carrier] || pkg.carrier}
-          </span>
+      <div className={styles.metaGrid}>
+        <div className={styles.metaCell}>
+          <span className={styles.metaLabel}>Courier</span>
+          <span className={`${styles.carrier} ${carrierClass(data.carrier)}`}><span />{data.carrier}</span>
         </div>
-        {lastEvent && (
-          <>
-            <div className={styles.metaItem}>
-              <span className={styles.metaLabel}>Última ubicación</span>
-              <span className={styles.metaValue}>
-                <MapPin size={12} style={{ marginRight: '0.25rem', verticalAlign: 'text-bottom' }} />
-                {lastEvent.location}
-              </span>
-            </div>
-            <div className={styles.metaItem}>
-              <span className={styles.metaLabel}>Última actualización</span>
-              <span className={styles.metaValue}>
-                <Clock size={12} style={{ marginRight: '0.25rem', verticalAlign: 'text-bottom' }} />
-                {new Date(lastEvent.date).toLocaleDateString('es-CL', {
-                  year: 'numeric', month: 'short', day: 'numeric'
-                })}
-              </span>
-            </div>
-          </>
-        )}
+        <div className={styles.metaCell}>
+          <span className={styles.metaLabel}>Estado actual</span>
+          <span className={styles.status}>{data.status}</span>
+        </div>
+        <div className={styles.metaCell}>
+          <span className={styles.metaLabel}>Última consulta</span>
+          <span className={styles.lastChecked}><Clock3 size={13} /> {formatDate(data.lastChecked)}</span>
+        </div>
+        <div className={styles.metaCell}>
+          <span className={styles.metaLabel}>Seguimiento protegido</span>
+          <span className={styles.secure}><ShieldCheck size={13} /> Activo</span>
+        </div>
       </div>
     </div>
   );

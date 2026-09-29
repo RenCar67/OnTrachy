@@ -1,0 +1,317 @@
+.appShell {
+  min-height: 100dvh;
+  display: flex;
+  background: var(--background);
+}
+
+.mainColumn {
+  min-width: 0;
+  width: calc(100% - 300px);
+}
+
+.topbar {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 40px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(10, 14, 26, .88);
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.mobileMenu {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  color: var(--text-muted);
+  padding: 6px;
+}
+
+.mobileMenu svg { display: block; }
+
+.mobileTitle {
+  display: none;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+}
+
+.statusSignal {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 4px var(--green-soft);
+}
+
+.topbarStatus {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.content {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 56px 40px 80px;
+}
+
+.hero {
+  max-width: 760px;
+  margin-bottom: 36px;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--green);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.eyebrowLine {
+  width: 24px;
+  height: 1px;
+  background: var(--green);
+}
+
+.hero h1 {
+  color: var(--text);
+  font-size: clamp(28px, 4vw, 38px);
+  letter-spacing: -.045em;
+  line-height: 1.12;
+  margin: 0 0 12px;
+}
+
+.hero p {
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 560px;
+  margin: 0;
+}
+
+.searchCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 32px;
+}
+
+.searchLabel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.formatHint {
+  color: var(--text-dim);
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.searchRow {
+  display: flex;
+  gap: 8px;
+}
+
+.inputWrap {
+  position: relative;
+  flex: 1;
+}
+
+.searchIcon {
+  color: var(--text-dim);
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.searchInput {
+  width: 100%;
+  height: 44px;
+  background: var(--surface-subtle);
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 0 44px;
+  outline: 0;
+  transition: border-color .16s ease, box-shadow .16s ease;
+}
+
+.searchInput::placeholder { color: #4f5e72; }
+.searchInput:focus { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-soft); }
+
+.detectedCarrier {
+  align-items: center;
+  color: var(--green-bright);
+  display: flex;
+  font-size: 11px;
+  gap: 6px;
+  pointer-events: none;
+  position: absolute;
+  right: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.carrierDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.searchButton {
+  align-items: center;
+  background: var(--green);
+  border: 1px solid var(--green);
+  border-radius: 8px;
+  color: #07110b;
+  display: flex;
+  font-size: 13px;
+  font-weight: 700;
+  gap: 8px;
+  justify-content: center;
+  min-width: 122px;
+  padding: 0 18px;
+  transition: background .16s ease, transform .16s ease;
+}
+
+.searchButton:hover { background: var(--green-bright); transform: translateY(-1px); }
+.searchButton:active { transform: translateY(0); }
+
+.searchError {
+  color: var(--red);
+  font-size: 12px;
+  line-height: 1.45;
+  margin: 10px 0 0;
+}
+
+.demoNotice {
+  align-items: center;
+  color: var(--text-dim);
+  display: flex;
+  font-size: 11px;
+  gap: 7px;
+  margin: 12px 0 0;
+}
+
+.demoNotice svg { color: var(--amber); }
+
+.sectionHeading {
+  align-items: baseline;
+  display: flex;
+  justify-content: space-between;
+  margin: 0 0 12px;
+}
+
+.sectionHeading h2 {
+  color: var(--text);
+  font-size: 16px;
+  letter-spacing: -.02em;
+  margin: 0;
+}
+
+.sectionHeading span {
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 16px;
+  align-items: start;
+}
+
+.primaryCard, .sideCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.primaryCard { overflow: hidden; }
+.sideCard { padding: 18px; }
+
+.errorBox {
+  background: rgba(248, 113, 113, .08);
+  border: 1px solid rgba(248, 113, 113, .25);
+  border-radius: 8px;
+  color: #fca5a5;
+  padding: 16px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.shortcutCopy {
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.shortcutCount {
+  border-top: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 11px;
+  margin-top: 16px;
+  padding-top: 14px;
+}
+
+.retryButton {
+  background: transparent;
+  border: 1px solid rgba(248, 113, 113, .4);
+  border-radius: 6px;
+  color: #fca5a5;
+  font-size: 12px;
+  margin-top: 12px;
+  padding: 7px 10px;
+}
+
+.retryButton:hover { background: rgba(248, 113, 113, .08); }
+
+@media (max-width: 1000px) {
+  .workspace { grid-template-columns: 1fr; }
+  .sideCard { display: none; }
+}
+
+@media (max-width: 720px) {
+  .appShell { display: block; }
+  .mainColumn { width: 100%; }
+  .topbar { height: 60px; padding: 0 18px; justify-content: space-between; }
+  .mobileMenu, .mobileTitle { display: flex; }
+  .topbarStatus { font-size: 11px; }
+  .topbarStatus span:last-child { display: none; }
+  .content { padding: 36px 18px 56px; }
+  .hero { margin-bottom: 28px; }
+  .hero h1 { font-size: 29px; }
+  .searchCard { padding: 16px; }
+  .searchLabel { align-items: flex-start; flex-direction: column; gap: 4px; }
+  .searchRow { flex-direction: column; }
+  .searchButton { height: 44px; }
+  .workspace { display: block; }
+}
